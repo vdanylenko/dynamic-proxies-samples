@@ -21,10 +21,10 @@
 package eu.javaspecialists.books.dynamicproxies.util;
 
 import eu.javaspecialists.books.dynamicproxies.*;
+import eu.javaspecialists.books.dynamicproxies.util.testclasses.*;
 import org.junit.*;
 
 import java.lang.reflect.*;
-import java.text.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -486,5 +486,29 @@ public class VTableTest {
   public void testDefaultMethods() {
     VTable vt = VTables.newDefaultMethodVTable(Iterable.class);
     assertEquals(2, vt.streamDefaultMethods().count());
+  }
+
+
+  @Test
+  public void testVTableMultipleInterfaceInheritanceWithDefaultMethods() throws NoSuchMethodException {
+
+    VTable bcVT =
+        new VTable.Builder(ABC.class).addTargetInterface(D.class)
+                      .includeDefaultMethods().build();
+
+    Assert.assertNotNull(bcVT);
+    Assert.assertEquals(4, bcVT.size());
+    Assert.assertEquals(bcVT.lookup(ABC.class.getMethod("fun")), ABC.class.getMethod("fun"));
+
+  }
+
+  @Test
+  public void testVTableTargetMultipleInterfaceInheritanceWithDefaultMethods() {
+
+    VTable bcVT =
+        new VTable.Builder(D.class).addTargetInterface(BCi.class)
+                      .includeDefaultMethods().build();
+
+    Assert.assertNotNull(bcVT);
   }
 }
