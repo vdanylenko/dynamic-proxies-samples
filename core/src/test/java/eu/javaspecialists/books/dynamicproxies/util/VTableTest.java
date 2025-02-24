@@ -21,7 +21,6 @@
 package eu.javaspecialists.books.dynamicproxies.util;
 
 import eu.javaspecialists.books.dynamicproxies.*;
-import eu.javaspecialists.books.dynamicproxies.util.testclasses.*;
 import org.junit.*;
 
 import java.lang.reflect.*;
@@ -498,7 +497,8 @@ public class VTableTest {
 
     Assert.assertNotNull(bcVT);
     Assert.assertEquals(4, bcVT.size());
-    Assert.assertEquals(bcVT.lookup(ABC.class.getMethod("fun")), ABC.class.getMethod("fun"));
+    var lookupMethod = bcVT.lookup(ABC.class.getMethod("fun"));
+    Assert.assertEquals(ABC.class.getMethod("fun"), lookupMethod);
 
   }
 
@@ -511,4 +511,46 @@ public class VTableTest {
 
     Assert.assertNotNull(bcVT);
   }
+
+  public interface A {
+    default A fun() {
+      return new A() {};
+    }
+  }
+
+  public interface B {
+    default B fun() {
+      System.out.println("B fun");
+      return new B() {};
+    }
+  }
+  public class ABC implements B, C {
+
+    public ABC fun() {
+      System.out.println("ABC Function");
+      return new ABC() {};
+    }
+  }
+
+  public interface BCi extends B, C {
+
+    default BCi fun() {
+      System.out.println("BC Function");
+      return new BCi() {};
+    }
+  }
+
+  public interface C {
+
+    default C fun() {
+      System.out.println("C fun");
+      return new C() {};
+    }
+  }
+
+  public interface D {
+    ABC fun();
+  }
+
+
 }
